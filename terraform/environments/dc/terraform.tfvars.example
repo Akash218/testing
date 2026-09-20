@@ -1,0 +1,224 @@
+# ==============================================================================
+# DC Environment — Example terraform.tfvars
+#
+# Copy this file to terraform.tfvars and fill in your actual values:
+#   cp terraform.tfvars.example terraform.tfvars
+#
+# IMPORTANT: terraform.tfvars contains sensitive data (passwords, license keys).
+#            It is excluded from git via .gitignore. NEVER commit this file.
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# Connection
+# ------------------------------------------------------------------------------
+
+active_bigip_address  = "10.0.0.1"    # DC Active management IP
+standby_bigip_address = "10.0.0.2"    # DC Standby management IP
+bigip_username        = "admin"
+bigip_password        = "CHANGE_ME"
+bigip_port            = "443"
+
+# ------------------------------------------------------------------------------
+# Shared Settings (applied to BOTH devices)
+# ------------------------------------------------------------------------------
+
+dns_nameservers    = ["10.1.1.10", "10.1.1.11"]
+dns_search_domains = ["example.com", "internal.example.com"]
+
+ntp_servers = ["ntp1.example.com", "ntp2.example.com"]
+timezone    = "Asia/Kolkata"
+
+provisioning = {
+  ltm = "nominal"
+}
+
+device_group_name = "dc-failover-group"
+
+# users = [
+#   {
+#     name     = "devops-user"
+#     password = "CHANGE_ME"
+#     role     = "admin"
+#     shell    = "tmsh"
+#   }
+# ]
+
+# syslog_remote_servers = [
+#   {
+#     name = "syslog-primary"
+#     host = "syslog.example.com"
+#     port = 514
+#   }
+# ]
+
+# snmp_agent = {
+#   contact    = "NOC Team <noc@example.com>"
+#   location   = "DC-Rack42"
+#   allow_list = ["10.0.0.0/8"]
+# }
+
+# snmp_trap_destinations = [
+#   {
+#     name        = "trap-receiver"
+#     destination = "10.1.1.100"
+#     port        = 162
+#     version     = "2c"
+#     community   = "public"
+#   }
+# ]
+
+# ------------------------------------------------------------------------------
+# DC ACTIVE Device
+# ------------------------------------------------------------------------------
+
+active_hostname         = "bigip-dc-active.example.com"
+active_registration_key = "XXXXX-XXXXX-XXXXX-XXXXX-XXXXXXX"
+
+active_vlans = [
+  {
+    name = "external"
+    tag  = 100
+    mtu  = 1500
+    interfaces = [
+      { name = "1.1", tagged = true }
+    ]
+  },
+  {
+    name = "internal"
+    tag  = 200
+    mtu  = 1500
+    interfaces = [
+      { name = "1.2", tagged = true }
+    ]
+  },
+  {
+    name = "ha"
+    tag  = 300
+    mtu  = 1500
+    interfaces = [
+      { name = "1.3", tagged = true }
+    ]
+  }
+]
+
+active_self_ips = [
+  {
+    name          = "external-self"
+    address       = "10.20.1.11/24"
+    vlan          = "external"
+    traffic_group = "traffic-group-local-only"
+    allow_service = "default"
+  },
+  {
+    name          = "internal-self"
+    address       = "10.20.2.11/24"
+    vlan          = "internal"
+    traffic_group = "traffic-group-local-only"
+    allow_service = "default"
+  },
+  {
+    name          = "ha-self"
+    address       = "10.20.3.11/24"
+    vlan          = "ha"
+    traffic_group = "traffic-group-local-only"
+    allow_service = "default"
+  },
+  {
+    name          = "external-floating"
+    address       = "10.20.1.10/24"
+    vlan          = "external"
+    traffic_group = "traffic-group-1"
+    allow_service = "default"
+  },
+  {
+    name          = "internal-floating"
+    address       = "10.20.2.10/24"
+    vlan          = "internal"
+    traffic_group = "traffic-group-1"
+    allow_service = "default"
+  }
+]
+
+active_routes = [
+  {
+    name    = "default-route"
+    network = "default"
+    gateway = "10.20.1.1"
+  }
+]
+
+active_configsync_ip            = "10.20.3.11"
+active_failover_unicast_address = "10.20.3.11"
+active_mirror_primary_ip        = "10.20.3.11"
+active_mirror_secondary_ip      = "10.20.2.11"
+
+# ------------------------------------------------------------------------------
+# DC STANDBY Device
+# ------------------------------------------------------------------------------
+
+standby_hostname         = "bigip-dc-standby.example.com"
+standby_registration_key = "YYYYY-YYYYY-YYYYY-YYYYY-YYYYYYY"
+
+standby_vlans = [
+  {
+    name = "external"
+    tag  = 100
+    mtu  = 1500
+    interfaces = [
+      { name = "1.1", tagged = true }
+    ]
+  },
+  {
+    name = "internal"
+    tag  = 200
+    mtu  = 1500
+    interfaces = [
+      { name = "1.2", tagged = true }
+    ]
+  },
+  {
+    name = "ha"
+    tag  = 300
+    mtu  = 1500
+    interfaces = [
+      { name = "1.3", tagged = true }
+    ]
+  }
+]
+
+standby_self_ips = [
+  {
+    name          = "external-self"
+    address       = "10.20.1.12/24"
+    vlan          = "external"
+    traffic_group = "traffic-group-local-only"
+    allow_service = "default"
+  },
+  {
+    name          = "internal-self"
+    address       = "10.20.2.12/24"
+    vlan          = "internal"
+    traffic_group = "traffic-group-local-only"
+    allow_service = "default"
+  },
+  {
+    name          = "ha-self"
+    address       = "10.20.3.12/24"
+    vlan          = "ha"
+    traffic_group = "traffic-group-local-only"
+    allow_service = "default"
+  }
+]
+
+standby_routes = [
+  {
+    name    = "default-route"
+    network = "default"
+    gateway = "10.20.1.1"
+  }
+]
+
+standby_configsync_ip            = "10.20.3.12"
+standby_failover_unicast_address = "10.20.3.12"
+standby_mirror_primary_ip        = "10.20.3.12"
+standby_mirror_secondary_ip      = "10.20.2.12"

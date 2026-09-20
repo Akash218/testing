@@ -1,0 +1,58 @@
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+*.tfplan
+
+# SSL Certificates & Keys - NEVER commit these
+*.pem
+*.key
+*.crt
+*.csr
+*.p12
+*.pfx
+certs/
+ssl-backup/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+*.egg-info/
+dist/
+build/
+
+# Backup outputs
+backups/
+backup_*/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Environment files
+*.env
+.env.*
